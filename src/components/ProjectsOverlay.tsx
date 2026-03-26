@@ -14,18 +14,6 @@ interface Project {
 
 const projects: Project[] = [
   {
-    name: 'GHAR',
-    org: 'Newton School',
-    description: [
-      'AI-driven home design platform with smart suggestions, 3D previews, and safe land analysis.',
-      'AI design ideas, real-time 3D visualization, interior/exterior customization, risk analysis, smart shopping.',
-    ],
-    tech: 'React.js, Tailwind CSS, Three.js, Node.js, Firebase/Supabase, OpenAI API, Framer Motion',
-    codeUrl: 'https://github.com/Maxiemad/Ghar.git',
-    hostedUrl: 'https://ghhaar.netlify.app/',
-    color: 'neon-text-purple',
-  },
-  {
     name: 'Share the Light',
     org: 'Newton School',
     description: [
@@ -105,6 +93,18 @@ const projects: Project[] = [
     codeUrl: 'https://github.com/Maxiemad/ESSENCE',
     hostedUrl: 'https://cheerful-jalebi-c14db7.netlify.app/',
     color: 'neon-text-blue',
+  },
+  {
+    name: 'GHAR',
+    org: 'Newton School',
+    description: [
+      'AI-driven home design platform with smart suggestions, 3D previews, and safe land analysis.',
+      'AI design ideas, real-time 3D visualization, interior/exterior customization, risk analysis, smart shopping.',
+    ],
+    tech: 'React.js, Tailwind CSS, Three.js, Node.js, Firebase/Supabase, OpenAI API, Framer Motion',
+    codeUrl: 'https://github.com/Maxiemad/Ghar.git',
+    hostedUrl: 'https://ghhaar.netlify.app/',
+    color: 'neon-text-purple',
   },
 ];
 
