@@ -42,6 +42,12 @@ const Experience = () => {
   const wheelRafRef = useRef<number | null>(null);
   const wheelLockRef = useRef(false);
   const wheelUnlockTimeoutRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartTimeRef = useRef<number | null>(null);
+  const touchLockRef = useRef(false);
+  const touchUnlockTimeoutRef = useRef<number | null>(null);
+  const touchShouldNavRef = useRef(false);
 
   // Mark ready quickly to avoid unnecessary perceived delay.
   useEffect(() => {
@@ -121,6 +127,119 @@ const Experience = () => {
         wheelUnlockTimeoutRef.current = null;
       }
       wheelLockRef.current = false;
+    };
+  }, [entered]);
+
+  // Mobile: swipe up/down to navigate scenes
+  useEffect(() => {
+    if (!entered) return;
+
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (!isMobile) return;
+
+    const SWIPE_THRESHOLD_PX = 70;
+    const HORIZONTAL_GUARD_PX = 40;
+    const COOLDOWN_MS = 500;
+
+    const isScrollableAllowed = (target: HTMLElement, deltaY: number) => {
+      const scrollable = target.closest('.custom-scrollbar');
+      if (!scrollable) return false;
+      const el = scrollable as HTMLElement;
+      const atTop = el.scrollTop === 0;
+      const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+      return (deltaY < 0 && !atTop) || (deltaY > 0 && !atBottom);
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (touchLockRef.current) return;
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      touchStartYRef.current = t.clientY;
+      touchStartXRef.current = t.clientX;
+      touchStartTimeRef.current = performance.now();
+      touchShouldNavRef.current = false;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (touchLockRef.current) return;
+      if (touchStartYRef.current == null || touchStartXRef.current == null) return;
+      if (e.touches.length !== 1) return;
+
+      const t = e.touches[0];
+      const dy = touchStartYRef.current - t.clientY; // + = swipe up
+      const dx = t.clientX - touchStartXRef.current;
+
+      // Ignore mostly-horizontal swipes.
+      if (Math.abs(dx) > HORIZONTAL_GUARD_PX && Math.abs(dx) > Math.abs(dy)) return;
+
+      const target = e.target as HTMLElement;
+      if (isScrollableAllowed(target, dy)) {
+        // Let user scroll inside the panel.
+        return;
+      }
+
+      // If user is doing a real vertical swipe, prevent the page from scrolling/bouncing.
+      if (Math.abs(dy) > 10) {
+        touchShouldNavRef.current = true;
+        e.preventDefault();
+      }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (touchLockRef.current) return;
+
+      const startY = touchStartYRef.current;
+      const startX = touchStartXRef.current;
+      const startT = touchStartTimeRef.current;
+      touchStartYRef.current = null;
+      touchStartXRef.current = null;
+      touchStartTimeRef.current = null;
+
+      if (!touchShouldNavRef.current) return;
+      touchShouldNavRef.current = false;
+
+      if (startY == null || startX == null || startT == null) return;
+      const changed = e.changedTouches[0];
+      if (!changed) return;
+
+      const dy = startY - changed.clientY;
+      const dx = changed.clientX - startX;
+      const dt = Math.max(1, performance.now() - startT);
+
+      if (Math.abs(dx) > HORIZONTAL_GUARD_PX && Math.abs(dx) > Math.abs(dy)) return;
+      if (Math.abs(dy) < SWIPE_THRESHOLD_PX) return;
+
+      // basic velocity guard (helps accidental tiny swipes)
+      const vy = Math.abs(dy) / dt; // px per ms
+      if (vy < 0.12) return;
+
+      const direction = dy > 0 ? 1 : -1; // swipe up -> next
+      setCurrentScene((s) => Math.max(0, Math.min(4, s + direction)));
+
+      touchLockRef.current = true;
+      if (touchUnlockTimeoutRef.current != null) window.clearTimeout(touchUnlockTimeoutRef.current);
+      touchUnlockTimeoutRef.current = window.setTimeout(() => {
+        touchLockRef.current = false;
+      }, COOLDOWN_MS);
+    };
+
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      if (touchUnlockTimeoutRef.current != null) {
+        window.clearTimeout(touchUnlockTimeoutRef.current);
+        touchUnlockTimeoutRef.current = null;
+      }
+      touchLockRef.current = false;
+      touchShouldNavRef.current = false;
+      touchStartYRef.current = null;
+      touchStartXRef.current = null;
+      touchStartTimeRef.current = null;
     };
   }, [entered]);
 
