@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 2%;
+    --foreground: 0 0% 95%;
+
+    --card: 260 30% 8%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 260 30% 8%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 270 80% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 180 100% 50%;
+    --secondary-foreground: 0 0% 5%;
+
+    --muted: 260 20% 15%;
+    --muted-foreground: 260 10% 60%;
+
+    --accent: 330 100% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 260 30% 18%;
+    --input: 260 30% 18%;
+    --ring: 270 80% 55%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens */
+    --neon-purple: 270 80% 55%;
+    --electric-blue: 180 100% 50%;
+    --pink-glow: 330 100% 58%;
+    --deep-space: 0 0% 2%;
+
+    --glow-purple: 0 0 20px hsl(270 80% 55% / 0.5), 0 0 60px hsl(270 80% 55% / 0.2);
+    --glow-blue: 0 0 20px hsl(180 100% 50% / 0.5), 0 0 60px hsl(180 100% 50% / 0.2);
+    --glow-pink: 0 0 20px hsl(330 100% 58% / 0.5), 0 0 60px hsl(330 100% 58% / 0.2);
+
+    --font-display: 'Orbitron', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-ui: 'Rajdhani', sans-serif;
+
+    --glass-bg: hsl(260 30% 8% / 0.4);
+    --glass-border: hsl(270 80% 55% / 0.2);
+    --glass-blur: 20px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    overflow: hidden;
+    cursor: none;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer components {
+  .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+  }
+
+  .neon-text-purple {
+    color: hsl(var(--neon-purple));
+    text-shadow: var(--glow-purple);
+  }
+
+  .neon-text-blue {
+    color: hsl(var(--electric-blue));
+    text-shadow: var(--glow-blue);
+  }
+
+  .neon-text-pink {
+    color: hsl(var(--pink-glow));
+    text-shadow: var(--glow-pink);
+  }
+
+  .neon-border-purple {
+    border-color: hsl(var(--neon-purple) / 0.5);
+    box-shadow: var(--glow-purple);
+  }
+
+  .neon-border-blue {
+    border-color: hsl(var(--electric-blue) / 0.5);
+    box-shadow: var(--glow-blue);
+  }
+
+  .scene-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .ui-label {
+    font-family: var(--font-ui);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+}
+
+@layer utilities {
+  .text-gradient-cyber {
+    background: linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--electric-blue)), hsl(var(--pink-glow)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Custom scrollbar - hidden by default */
+::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--neon-purple) / 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--neon-purple) / 0.6);
+}
+
+/* Selection */
+::selection {
+  background: hsl(var(--neon-purple) / 0.4);
+  color: hsl(var(--foreground));
+}
